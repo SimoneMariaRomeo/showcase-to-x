@@ -1,0 +1,4 @@
+interface:
+  display_name: "Showcase to X"
+  short_description: "Draft X showcase posts safely"
+  default_prompt: "Use $showcase-to-x to draft an X post showcasing the work I just completed."
