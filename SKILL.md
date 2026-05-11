@@ -7,7 +7,7 @@ description: Draft and optionally publish an X post that showcases work the user
 
 ## Core Rule
 
-Prepare and stage X posts that showcase the user's just-completed work. Do not publish the main post, replies, comments, or links until the user explicitly confirms the exact content and destination.
+Prepare and stage X posts that showcase the user's just-completed work. Do not publish the main post, replies, comments, or links until the content is typed into X and the user explicitly confirms the staged browser content and destination.
 
 Use Browser for X interaction. Use `local-password-manager` for X login when credentials are needed. Never ask the user to paste passwords into chat, never print secrets, and stop at CAPTCHA, 2FA, passkey, recovery-code, or suspicious-login screens.
 
@@ -19,7 +19,7 @@ Use this path when `local-password-manager` is not installed, the X credential i
    - Codex will install or use a local password manager.
    - The user will add the X credential in a local GUI.
    - Codex can later use the approved X credential for `x.com` without seeing the password.
-   - Codex will draft posts and ask for confirmation before publishing.
+   - Codex will draft posts, type them into X, and ask for confirmation before publishing.
    - Links will be posted as replies/comments, not in the main post, unless the user asks otherwise.
 2. Resolve the Codex skills directory:
    - If `CODEX_HOME` is set, use `$CODEX_HOME/skills`.
@@ -81,11 +81,13 @@ Use this path when the local password manager is installed and an X credential e
    - Put links in the first reply/comment after the main post.
    - If there are multiple links, keep the reply readable and compact.
    - If a link is private, local, or not useful to readers, omit it unless the user asks to include it.
-4. Ask for explicit confirmation before publishing:
-   - Show the exact main post text.
-   - Show the exact link reply text, if any.
-   - State that confirmation will publish to X.
-   - Do not click `Post` or send replies until the user confirms.
+4. Stage and confirm in the browser:
+   - Open X and type the drafted main post into the composer before asking for publish confirmation.
+   - Let the user edit the staged text directly in the browser if needed.
+   - Re-read the staged composer text after any user edit.
+   - Ask for explicit confirmation using the exact staged browser text and destination.
+   - Do not click `Post` until the user confirms the staged content.
+   - After the main post is live, type each reply/comment into X, let the user edit it in the browser if needed, re-read it, and ask for explicit confirmation before clicking `Reply`.
 
 ## X Login With Local Password Manager
 
@@ -105,27 +107,45 @@ Never include username/password values in generated scripts, prompts, logs, scre
 1. Load and follow the current Browser skill before the first browser action. Use the in-app Browser backend for X unless the user approves a fallback.
 2. Open `https://x.com/compose/post` in Browser.
 3. If redirected to login, complete the login flow using the local password manager rules above.
-4. Fill the composer with the confirmed main post.
-5. Re-read the composer text and verify it exactly matches the confirmed text.
-6. Click `Post` only after explicit confirmation.
-7. After the main post is live, open the live post and add the confirmed link reply/comment.
-8. If X reports `Whoops! You already said that`, check the profile for an already-published matching post before retrying.
-9. If X reports `Something went wrong`, inspect the visible toast/dialog and report the state. Do not repeatedly retry the same post.
+4. Fill the composer with the drafted main post.
+5. Tell the user the post is staged in X and can be edited directly in the browser.
+6. Re-read the staged composer text.
+7. Ask for explicit confirmation to publish the exact staged text to X.
+8. Click `Post` only after explicit confirmation.
+9. After the main post is live, open the live post and type the drafted link reply/comment into the reply composer.
+10. Tell the user the reply/comment is staged in X and can be edited directly in the browser.
+11. Re-read the staged reply/comment text.
+12. Ask for explicit confirmation to publish the exact staged reply/comment.
+13. Click `Reply` only after explicit confirmation.
+14. If X reports `Whoops! You already said that`, check the profile for an already-published matching post before retrying.
+15. If X reports `Something went wrong`, inspect the visible toast/dialog and report the state. Do not repeatedly retry the same post.
 
 ## Confirmation Wording
 
 Use direct confirmation prompts:
 
 ```text
-Ready to publish this to X?
+I staged this in X. You can edit it directly in the browser now.
 
-Main post:
-...
+Ready to publish the staged post to X?
 
-Reply with links:
+Staged post:
 ...
 
 Please confirm explicitly before I click Post.
 ```
 
-If the user changes the text, update the composer and re-confirm before publishing.
+For replies/comments:
+
+```text
+I staged this reply/comment in X. You can edit it directly in the browser now.
+
+Ready to publish the staged reply/comment to X?
+
+Staged reply/comment:
+...
+
+Please confirm explicitly before I click Reply.
+```
+
+If the user changes the text in chat, update the browser composer, re-read it, and re-confirm before publishing. If the user edits directly in the browser, re-read the staged browser text and re-confirm before publishing.
